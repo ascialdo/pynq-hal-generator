@@ -37,12 +37,22 @@ def test_cli_custom_vlnv(tmp_path):
     assert "acme.com:user:my_ip:2.0" in source
 
 
-def test_cli_submodule_path(tmp_path):
+def test_cli_submodule_path_explicit(tmp_path):
     out = tmp_path / "pynq_driver"
     main([FIXTURE, "--output-dir", str(out), "--ip-name", "x", "--submodule-path", "./my-hdl-repo"])
     nb = json.loads((out / "test_template.ipynb").read_text())
     cell1 = "".join(nb["cells"][0]["source"])
     assert "./my-hdl-repo" in cell1
+
+
+def test_cli_submodule_path_auto_derived(tmp_path):
+    """When --submodule-path is not provided, it is derived from the config parent dir name."""
+    out = tmp_path / "pynq_driver"
+    main([FIXTURE, "--output-dir", str(out)])
+    nb = json.loads((out / "test_template.ipynb").read_text())
+    cell1 = "".join(nb["cells"][0]["source"])
+    # Fixture is at tests/fixtures/axi_config.json → parent = fixtures
+    assert "./fixtures" in cell1
 
 
 def test_cli_missing_config(tmp_path, capsys):

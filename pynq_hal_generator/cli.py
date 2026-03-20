@@ -10,6 +10,17 @@ from .parser import parse
 from .generator import generate
 
 
+def _submodule_path_from_config(config_path: Path) -> str:
+    """Derive submodule path from the config file's parent directory name.
+
+    When pynq-hal-gen is run from inside the HDL repo (e.g. logic-gates-tester/),
+    the parent dir name equals the submodule directory name in the board repo.
+    Result: ./logic-gates-tester — correct for sys.path.insert from the board repo root.
+    """
+    parent_name = config_path.resolve().parent.name
+    return f"./{parent_name}" if parent_name else "."
+
+
 def _ip_name_from_config(config_path: Path) -> str | None:
     """Derive ip_name from top_entity in config (e.g. hdl/foo.vhd → foo_axi)."""
     try:
@@ -44,10 +55,11 @@ def main(argv=None) -> None:
     )
     parser.add_argument(
         "--submodule-path",
-        default=".",
+        default=None,
         help=(
             "Relative path from the board repo notebook to the HDL submodule root "
-            "(used for sys.path.insert in the generated notebook). Default: '.'"
+            "(used for sys.path.insert in the generated notebook). "
+            "Defaults to ./<config parent directory name>."
         ),
     )
 
@@ -60,9 +72,10 @@ def main(argv=None) -> None:
 
     ip_name = args.ip_name or _ip_name_from_config(config_path) or config_path.resolve().parent.name
     vlnv = args.vlnv or f"xilinx.com:module_ref:{ip_name}:1.0"
+    submodule_path = args.submodule_path or _submodule_path_from_config(config_path)
 
     hal_config = parse(config_path, ip_name=ip_name, vlnv=vlnv)
-    written = generate(hal_config, output_dir=Path(args.output_dir), submodule_path=args.submodule_path)
+    written = generate(hal_config, output_dir=Path(args.output_dir), submodule_path=submodule_path)
 
     for name, path in written.items():
         print(f"  wrote {path}")
