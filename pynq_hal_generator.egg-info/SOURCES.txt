@@ -1,0 +1,17 @@
+pyproject.toml
+pynq_hal_generator/__init__.py
+pynq_hal_generator/cli.py
+pynq_hal_generator/generator.py
+pynq_hal_generator/models.py
+pynq_hal_generator/parser.py
+pynq_hal_generator.egg-info/PKG-INFO
+pynq_hal_generator.egg-info/SOURCES.txt
+pynq_hal_generator.egg-info/dependency_links.txt
+pynq_hal_generator.egg-info/entry_points.txt
+pynq_hal_generator.egg-info/requires.txt
+pynq_hal_generator.egg-info/top_level.txt
+pynq_hal_generator/templates/hal.py.j2
+pynq_hal_generator/templates/test_template.ipynb.j2
+tests/test_cli.py
+tests/test_generator.py
+tests/test_parser.py

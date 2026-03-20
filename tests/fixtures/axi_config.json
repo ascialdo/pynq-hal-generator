@@ -1,0 +1,38 @@
+{
+  "top_entity": "hdl/logic_gate_controller.vhd",
+  "register_width": 32,
+  "registers": {
+    "REG_CTRL": {
+      "offset": "0x00",
+      "description": "Main control register.",
+      "fields": [
+        { "port": "test_en", "bits": [0, 0], "access": "RW", "description": "Enables the output." },
+        { "port": "errors_rst",   "bits": [1, 1], "access": "RW", "description": "Reset the errors registers" },
+        { "port": "input_a",      "bits": [5, 2], "access": "RW", "description": "Inputs to be applied to DUT port A" },
+        { "port": "input_b",      "bits": [9, 6], "access": "RW", "description": "Inputs to be applied to DUT port B" },
+        { "port": "truth_table",  "bits": [13, 10], "access": "RW", "description": "Inputs to be applied to DUT port B" }
+      ]
+    },
+    "ERROR_SELECT": {
+      "offset": "0x04",
+      "description": "Select the errors counter that will be read on the register REG_ERRORS",
+      "fields": [
+        { "port": "errors_select", "bits": [31, 0], "access": "RW", "description": "Enables the output." }
+      ]
+    },
+"REG_ERRORS": {
+      "offset": "0x08",
+      "description": "Return the errors registered for the DUT selected in ERROR_SELECT",
+      "fields": [
+        { "port": "errors", "bits": [31, 0], "access": "RO", "description": "Errors registeres" }
+      ]
+    },
+"READ_LATENCY": {
+      "offset": "0x1C",
+      "description": "Set the clock cycle to wait before checking the DUT output",
+      "fields": [
+        { "port": "read_latency", "bits": [31, 0], "access": "RW", "description": "clock cycle to wait before checking the DUT output" }
+      ]
+    }
+  }
+}

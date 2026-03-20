@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pynq-hal-generator"
+version = "0.1.0"
+description = "Generate a PYNQ HAL Python class and Jupyter notebook test scaffold from axi_config.json"
+requires-python = ">=3.8"
+dependencies = [
+    "jinja2>=3.0",
+]
+
+[project.scripts]
+pynq-hal-gen = "pynq_hal_generator.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["pynq_hal_generator*"]
+
+[tool.setuptools.package-data]
+pynq_hal_generator = ["templates/*.j2"]

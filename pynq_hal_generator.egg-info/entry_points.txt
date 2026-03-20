@@ -1,0 +1,2 @@
+[console_scripts]
+pynq-hal-gen = pynq_hal_generator.cli:main
