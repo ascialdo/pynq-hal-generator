@@ -2,11 +2,23 @@
 
 from __future__ import annotations
 import argparse
+import json
 import sys
 from pathlib import Path
 
 from .parser import parse
 from .generator import generate
+
+
+def _ip_name_from_config(config_path: Path) -> str | None:
+    """Derive ip_name from top_entity in config (e.g. hdl/foo.vhd → foo_axi)."""
+    try:
+        raw = json.loads(config_path.read_text())
+        top = raw.get("top_entity", "")
+        stem = Path(top).stem
+        return f"{stem}_axi" if stem else None
+    except Exception:
+        return None
 
 
 def main(argv=None) -> None:
@@ -23,7 +35,7 @@ def main(argv=None) -> None:
     parser.add_argument(
         "--ip-name",
         default=None,
-        help="IP name used for class naming; defaults to parent directory name",
+        help="IP name used for class naming; defaults to <top_entity stem>_axi from config, then parent directory name",
     )
     parser.add_argument(
         "--vlnv",
@@ -46,7 +58,7 @@ def main(argv=None) -> None:
         print(f"Error: config file not found: {config_path}", file=sys.stderr)
         sys.exit(1)
 
-    ip_name = args.ip_name or config_path.parent.name
+    ip_name = args.ip_name or _ip_name_from_config(config_path) or config_path.resolve().parent.name
     vlnv = args.vlnv or f"xilinx.com:module_ref:{ip_name}:1.0"
 
     hal_config = parse(config_path, ip_name=ip_name, vlnv=vlnv)

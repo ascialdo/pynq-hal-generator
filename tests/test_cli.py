@@ -19,11 +19,15 @@ def test_cli_smoke(tmp_path):
     assert (out / "__init__.py").exists()
 
 
-def test_cli_default_ip_name(tmp_path):
-    """ip-name defaults to parent dir of axi_config.json."""
+def test_cli_default_ip_name_from_top_entity(tmp_path):
+    """ip-name defaults to <top_entity stem>_axi when not provided."""
     out = tmp_path / "pynq_driver"
     main([FIXTURE, "--output-dir", str(out)])
-    assert (out / "hal.py").exists()
+    source = (out / "hal.py").read_text()
+    # axi_config.json has top_entity: "hdl/logic_gate_controller.vhd"
+    # → ip_name = logic_gate_controller_axi → class LogicGateControllerAxi
+    assert "LogicGateControllerAxi" in source
+    assert "logic_gate_controller_axi" in source
 
 
 def test_cli_custom_vlnv(tmp_path):
